@@ -628,3 +628,22 @@
     margin-top: auto;
   }
 }
+
+/* SCARLETTE - Footer al fondo en escritorio */
+@media (min-width: 1200px) {
+  body.panel-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  body.panel-page > .app-shell {
+    flex: 1 0 auto;
+    width: 100%;
+  }
+
+  body.panel-page .page-footer {
+    margin-top: auto;
+  }
+}
