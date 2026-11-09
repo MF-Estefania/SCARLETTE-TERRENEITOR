@@ -628,3 +628,41 @@
     margin-top: auto;
   }
 }
+/* SCARLETTE - Ajustes finales exclusivos para celulares */
+@media (max-width: 767.98px) {
+
+  /* DETENER siempre accesible */
+  .panel-page .stop-band {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 10px 14px;
+    background: rgba(8, 9, 15, 0.96);
+  }
+
+  /* Espacio para que DETENER no cubra el contenido */
+  .panel-page .app-shell {
+    padding-bottom: 70px !important;
+  }
+
+  /* Joystick */
+  .panel-page .joystick-card {
+    gap: 4px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  /* Tarjeta DEMO */
+  .panel-page .demo-card {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  /* Tarjeta Eventos */
+  .panel-page .events-card {
+    padding: 10px;
+  }
+
+}
