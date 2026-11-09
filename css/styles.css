@@ -307,3 +307,41 @@
  .panel-page .stop-band::after{transform:scaleX(-1)}
  .panel-page .stop-band>.emergency-stop{flex-shrink:0}
 }
+
+/* SCARLETTE - Boton cerrar sesion */
+.logout-button {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 80, 170, 0.65);
+  border-radius: 12px;
+  background: rgba(255, 40, 130, 0.10);
+  color: #ff8bc5;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+
+.logout-button:hover {
+  background: rgba(255, 40, 130, 0.22);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 40, 130, 0.25);
+}
+
+.logout-button:focus-visible {
+  outline: 2px solid #ff8bc5;
+  outline-offset: 3px;
+}
+
+.logout-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (max-width: 600px) {
+  .logout-button {
+    padding: 9px 12px;
+    font-size: 0.78rem;
+  }
+}

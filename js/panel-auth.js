@@ -34,3 +34,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.replace("index.html");
   }
 });
+
+/* SCARLETTE - Cierre de sesion */
+document.addEventListener("DOMContentLoaded", () => {
+  const boton = document.getElementById("logout-button");
+  if (!boton) return;
+
+  boton.addEventListener("click", async () => {
+    if (boton.disabled) return;
+
+    boton.disabled = true;
+    boton.textContent = "Cerrando sesión...";
+
+    try {
+      await window.SCARLETTE_AUTH.cerrarSesion();
+    } catch (error) {
+      console.warn(
+        "No se pudo confirmar el cierre de sesión en AWS:",
+        error.message
+      );
+      alert(
+        "Se eliminó la sesión de este navegador, pero no se pudo confirmar su cierre en AWS."
+      );
+    } finally {
+      window.SCARLETTE_API.limpiarToken();
+      window.location.replace("index.html");
+    }
+  });
+});
