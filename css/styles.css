@@ -609,7 +609,7 @@
 @media (min-width: 1200px) {
 
   .panel-page .app-shell {
-    min-height: calc(100vh - 130px);
+    min-height: calc(100svh - 82px);
     display: flex;
     flex-direction: column;
   }
@@ -619,31 +619,12 @@
   }
 
   .panel-page .scarlette-events {
-    height: 125px;
-    max-height: 125px !important;
+    height: 200px;
+    max-height: 200px !important;
     overflow-y: auto !important;
   }
 
   .panel-page .page-footer {
-    margin-top: auto;
-  }
-}
-
-/* SCARLETTE - Footer al fondo en escritorio */
-@media (min-width: 1200px) {
-  body.panel-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    min-height: 100svh;
-  }
-
-  body.panel-page > .app-shell {
-    flex: 1 0 auto;
-    width: 100%;
-  }
-
-  body.panel-page .page-footer {
     margin-top: auto;
   }
 }
