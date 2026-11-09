@@ -26,7 +26,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Sesión verificada. Mostrar el panel.
     document.body.style.visibility = "visible";
 
-    console.info("SCARLETTE: sesión verificada correctamente.");
+    // Notificar a los módulos del panel que la sesión es válida.
+    document.dispatchEvent(
+      new CustomEvent("scarlette:sesion-verificada", {
+        detail: { usuario }
+     })
+    );
+
+console.info("SCARLETTE: sesión verificada correctamente.");
   } catch (error) {
     console.error("SCARLETTE: no fue posible verificar la sesión.");
 
