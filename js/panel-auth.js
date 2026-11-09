@@ -26,6 +26,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Sesión verificada. Mostrar el panel.
     document.body.style.visibility = "visible";
 
+    // Ocultar el aviso de vista previa cuando la sesión sea válida.
+    const avisoVistaPrevia = document.querySelector(".preview-notice");
+    if (avisoVistaPrevia) {
+      avisoVistaPrevia.hidden = true;
+    }
+
     // Notificar a los módulos del panel que la sesión es válida.
     document.dispatchEvent(
       new CustomEvent("scarlette:sesion-verificada", {
