@@ -22,8 +22,7 @@
  .login-card .info-box{padding:10px 12px}
  .login-footnote{margin-top:14px}
  .login-intro h1{margin:14px 0}
- .login-intro .vehicle-art{margin-top:16px;margin-bottom:12px}
-}
+ .login-intro .vehicle-art{margin-top:16px;margin-bottom:12px}}
 @media(min-width:1200px){
  .topbar{padding:12px 26px 18px;gap:20px}
  .brand>.icon{width:48px;height:48px}
@@ -43,8 +42,7 @@
  .emergency-stop{padding:12px 24px}
  .events-card{padding:14px 18px;gap:16px}
  .events-empty{padding:10px 16px}
- .page-footer{padding-top:12px}
-}
+ .page-footer{padding-top:12px}}
 /* Laptop displays: reclaim whitespace while preserving readable controls. */
 @media(min-width:1200px) and (max-height:850px){
  .topbar{padding-top:10px;padding-bottom:14px}
@@ -73,8 +71,7 @@
  .login-shell{padding-top:16px;padding-bottom:16px}
  .login-intro h1{font-size:clamp(40px,4vw,58px)}
  .login-intro .vehicle-art{width:min(100%,540px)}
- .login-footer{padding-top:8px;padding-bottom:12px}
-}
+ .login-footer{padding-top:8px;padding-bottom:12px}}
 
 /* Shared identity: identical typography and wrapping on both screens. */
 .topbar>.brand{min-width:0;max-width:100%;flex:0 1 auto}
@@ -90,18 +87,15 @@
  .topbar>.brand{flex-shrink:0}
  .topbar>.connections{padding-left:20px;gap:10px}
  .connection{gap:9px;padding-left:12px;padding-right:12px}
- .connection-label{font-size:14px}
-}
+ .connection-label{font-size:14px}}
 @media(max-width:767.98px){
  .brand{gap:12px}
  .brand>.icon{width:44px;height:44px}
- .brand-name{font-size:24px}
-}
+ .brand-name{font-size:24px}}
 @media(max-width:575.98px){
  .brand-name{font-size:24px}
  .brand p{font-size:13px}
- .header-caption{display:block;font-size:10px;letter-spacing:1.5px}
-}
+ .header-caption{display:block;font-size:10px;letter-spacing:1.5px}}
 
 /* Practice 4.1: compact mobile workspace; content keeps its natural height.
    No viewport clipping or nested scrolling: larger text may extend the page. */
@@ -183,8 +177,7 @@
  .login-card .info-box{font-size:11px;line-height:1.3;gap:7px;padding:7px 8px;border-radius:11px}
  .login-card .info-box .icon{width:18px;height:18px}
  .login-footnote{font-size:10px;margin-top:7px}
- .login-footer{padding:4px 12px 8px}
-}
+ .login-footer{padding:4px 12px 8px}}
 @media(min-width:768px) and (max-width:1199.98px){
  .panel-page .topbar{padding:10px 18px 14px;gap:10px}
  .panel-page .app-shell{padding:14px 18px}
@@ -196,22 +189,18 @@
  .panel-page .demo-card .card-heading{grid-column:1/-1}
  .panel-page .demo-card .form-label{margin:0;align-self:center}
  .panel-page .demo-card>.neon-button,.panel-page .demo-card>.outline-button{margin:0}
- .panel-page .demo-card>.info-box{grid-column:1/-1;margin:0}
-}
+ .panel-page .demo-card>.info-box{grid-column:1/-1;margin:0}}
 @media(min-width:1200px) and (max-height:800px){
  .panel-page .app-shell{padding-top:10px}
  .panel-page .center-column>.vehicle-art{width:min(100%,420px)}
  .panel-page .joystick{width:min(100%,250px);margin:16px auto}
  .panel-page .stop-band{padding:10px 0}
  .panel-page .events-card{padding:10px 14px}
- .panel-page .page-footer{padding-top:8px}
-}
+ .panel-page .page-footer{padding-top:8px}}
 
 /* Mobile panel usability: balanced control columns and full-width DEMO. */
 @media(max-width:767.98px){
  .panel-page .control-layout{grid-template-columns:minmax(0,.97fr) minmax(0,1.03fr);align-items:stretch}
- .panel-page .joystick{width:min(100%,176px);margin:auto}
- .panel-page .joystick-card{gap:12px;padding-bottom:12px}
  .panel-page .joystick-card>.info-box,
  .panel-page .demo-card>.info-box{display:none}
  .panel-page .demo-column{grid-column:1/-1;width:100%}
@@ -223,11 +212,9 @@
  .panel-page .demo-card>.outline-button{grid-area:cancel}
  .panel-page .demo-card>.neon-button,
  .panel-page .demo-card>.outline-button{min-height:48px;font-size:14px;line-height:1.25;padding:8px 6px;gap:6px;white-space:normal;min-width:0}
- .panel-page .emergency-stop{min-height:52px}
-}
+ .panel-page .emergency-stop{min-height:52px}}
 @media(min-width:600px) and (max-width:767.98px){
- .panel-page .demo-card{grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(0,1fr));grid-template-areas:"title label label" "selector execute cancel";align-items:center}
-}
+ .panel-page .demo-card{grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(0,1fr));grid-template-areas:"title label label" "selector execute cancel";align-items:center}}
 
 /* Final mobile spacing: natural document flow and equal touch targets. */
 @media(max-width:767.98px){
@@ -244,12 +231,11 @@
  .panel-page .app-shell{display:flex;flex-direction:column;flex:1}
  .panel-page .app-shell> *{flex-shrink:0}
  .panel-page .app-shell>.page-footer{margin-top:auto;padding-bottom:max(4px,env(safe-area-inset-bottom))}
- .panel-page .movement-grid{grid-template-rows:repeat(4,minmax(62px,1fr));align-items:stretch;justify-items:stretch}
- .panel-page .movement-grid>.movement{width:100%;height:100%;min-height:62px;font-size:10.5px;line-height:1.15;align-items:center;justify-content:center;text-align:center}
+ .panel-page .movement-grid{align-items:stretch;justify-items:stretch}
+ .panel-page .movement-grid>.movement{width:100%;height:100%;font-size:10.5px;line-height:1.15;align-items:center;justify-content:center;text-align:center}
  .panel-page .movement-grid>.movement .icon{flex-shrink:0}
  .panel-page .demo-card>.neon-button,
- .panel-page .demo-card>.outline-button{align-self:stretch;min-height:48px;display:flex;align-items:center;justify-content:center}
-}
+ .panel-page .demo-card>.outline-button{align-self:stretch;min-height:48px;display:flex;align-items:center;justify-content:center}}
 
 /* Shared action typography and height; emergency action retains pink emphasis. */
 .panel-page .demo-card>.neon-button,
@@ -268,16 +254,14 @@
  .panel-page .movement-grid>.movement:nth-child(4){grid-area:3/1}
  .panel-page .movement-grid>.movement:nth-child(6){grid-area:3/2}
  .panel-page .movement-grid>.movement:nth-child(7){grid-area:4/1}
- .panel-page .movement-grid>.movement:nth-child(8){grid-area:4/2}
-}
+ .panel-page .movement-grid>.movement:nth-child(8){grid-area:4/2}}
 
 /* Distinct action colors, retaining the existing dimensions and type. */
 .panel-page .demo-card>.outline-button{background:linear-gradient(180deg,#352044,#21132e);border-color:#9c6bc2;box-shadow:inset 0 1px 2px #d2b2ec22,0 0 10px #6e3d9022}
 .panel-page .emergency-stop{background:linear-gradient(180deg,#86114c,#57072e);border-color:#ff55af;box-shadow:inset 0 0 12px #ff219955,0 0 18px #ff168866,0 0 4px #ff81c4}
 @media(max-width:767.98px){
  .login-page .login-intro .vehicle-art{margin-bottom:11px}
- .login-page .intro-tags{align-items:center;justify-content:center}
-}
+ .login-page .intro-tags{align-items:center;justify-content:center}}
 
 /* Desktop only: original button nodes keep their command associations. */
 @media(min-width:1200px){
@@ -296,8 +280,7 @@
  .panel-page .stop-band::before,
  .panel-page .stop-band::after{content:"";display:block;flex:1 1 0;min-width:0;height:44px;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%2048%22%20preserveAspectRatio%3D%22none%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M0%2033H390L422%209H510L518%205H600%22%20stroke%3D%22%23ff349f%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M0%2039H398L430%2015H508%22%20stroke%3D%22%23a91b65%22%20stroke-width%3D%221%22%2F%3E%3Cpath%20d%3D%22M0%2028H140L146%2033M285%2033L317%209H345M305%2033L337%209H365M325%2033L357%209H385%22%20stroke%3D%22%23776079%22%20stroke-opacity%3D%22.65%22%20stroke-width%3D%221%22%2F%3E%3Cpath%20d%3D%22M0%2040H92L100%2034H300L306%2040H390L420%2018%22%20stroke%3D%22%23e81a84%22%20stroke-opacity%3D%22.55%22%20stroke-width%3D%221%22%2F%3E%3Cpath%20d%3D%22M0%2029H30L22%2035H0ZM78%2034H158L163%2038H74ZM528%203H580L584%207H524Z%22%20fill%3D%22%23e90a7d%22%20fill-opacity%3D%22.7%22%2F%3E%3Cpath%20d%3D%22M440%209H482M546%205H590%22%20stroke%3D%22%23ff8ac5%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-size:100% 100%;background-position:center;box-shadow:none;filter:drop-shadow(0 0 3px #f20b8355)}
  .panel-page .stop-band::after{transform:scaleX(-1)}
- .panel-page .stop-band>.emergency-stop{flex-shrink:0}
-}
+ .panel-page .stop-band>.emergency-stop{flex-shrink:0}}
 
 /* Compact mobile HUD: contained in the existing 48px action band. */
 @media(max-width:767.98px){
@@ -305,8 +288,7 @@
  .panel-page .stop-band::before,
  .panel-page .stop-band::after{content:"";display:block;flex:1 1 0;min-width:0;height:28px;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2072%2032%22%20preserveAspectRatio%3D%22none%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M1%2024H21L33%2012H49L55%206H71%22%20stroke%3D%22%23ff349f%22%20stroke-width%3D%221.6%22%2F%3E%3Cpath%20d%3D%22M1%2029H24L36%2017H48%22%20stroke%3D%22%23bb226e%22%20stroke-width%3D%221%22%2F%3E%3Cpath%20d%3D%22M8%2020H18L29%209M17%2020H22L33%209%22%20stroke%3D%22%2394708b%22%20stroke-opacity%3D%22.65%22%20stroke-width%3D%221%22%2F%3E%3Cpath%20d%3D%22M2%2023H12L9%2026H2ZM58%204H68L70%207H55Z%22%20fill%3D%22%23f20b83%22%20fill-opacity%3D%22.8%22%2F%3E%3Cpath%20d%3D%22M39%2012H47%22%20stroke%3D%22%23ff9cd1%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-size:100% 100%;background-position:center;box-shadow:none;filter:drop-shadow(0 0 2px #f20b8355)}
  .panel-page .stop-band::after{transform:scaleX(-1)}
- .panel-page .stop-band>.emergency-stop{flex-shrink:0}
-}
+ .panel-page .stop-band>.emergency-stop{flex-shrink:0}}
 
 /* SCARLETTE - Boton cerrar sesion */
 .logout-button {
@@ -343,8 +325,7 @@
   .logout-button {
     padding: 9px 12px;
     font-size: 0.78rem;
-  }
-}
+  }}
 
 /* SCARLETTE - Encabezado movil compacto */
 @media (max-width: 575.98px) {
@@ -391,8 +372,7 @@
     width: 100%;
     padding: 0;
     margin: 0;
-  }
-}
+  }}
 
 
 /* SCARLETTE - Historial WebSocket */
@@ -432,10 +412,6 @@
 
 /* SCARLETTE - Historial adaptable a celulares */
 @media (max-width: 767.98px) {
-  .panel-page .events-card {
-    padding: 10px;
-    gap: 8px;
-  }
 
   .panel-page .events-card h2 {
     font-size: 14px;
@@ -451,8 +427,7 @@
   .panel-page .events-card .events-empty > * {
     font-size: 12px;
     line-height: 1.4;
-  }
-}
+  }}
 
 /* SCARLETTE - Historial WebSocket adaptable */
 .panel-page .events-card {
@@ -483,12 +458,7 @@
 }
 
 /* Historial en celulares */
-@media (max-width: 767.98px) {
-  .panel-page .scarlette-events {
-    max-height: 120px !important;
-    padding: 8px !important;
-  }
-}
+@media (max-width: 767.98px) {}
 
 /* SCARLETTE - Ajuste vertical para computadoras */
 @media (min-width: 1200px) and (max-height: 950px) {
@@ -561,8 +531,7 @@
 
   .panel-page .page-footer {
     padding-top: 5px;
-  }
-}
+  }}
 
 /* SCARLETTE - Historial WebSocket con scroll interno */
 .panel-page .events-card {
@@ -598,12 +567,7 @@
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 767.98px) {
-  .panel-page .scarlette-events {
-    height: 100px;
-    max-height: 100px !important;
-  }
-}
+@media (max-width: 767.98px) {}
 
 /* SCARLETTE - Aprovechamiento del espacio vertical en escritorio */
 @media (min-width: 1200px) {
@@ -626,43 +590,66 @@
 
   .panel-page .page-footer {
     margin-top: auto;
-  }
-}
+  }}
 /* SCARLETTE - Ajustes finales exclusivos para celulares */
-@media (max-width: 767.98px) {
+@media (max-width: 767.98px) {}
 
-  /* DETENER siempre accesible */
+/* Consolidated dimensions for the mobile panel only. */
+@media (max-width: 767.98px) {
+  .panel-page {
+    --panel-stop-height: 48px;
+    --panel-stop-padding: 8px;
+    --panel-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --panel-stop-bar-height: calc(var(--panel-stop-height) + var(--panel-stop-padding) + var(--panel-stop-padding) + var(--panel-safe-bottom));
+  }
+  .panel-page .app-shell {
+    padding-bottom: calc(var(--panel-stop-bar-height) + 4px);
+  }
+  .panel-page .joystick {
+    width: min(100%, 160px);
+    margin: auto;
+  }
+  .panel-page .joystick-card {
+    gap: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .panel-page .movement-grid {
+    grid-template-rows: repeat(4, minmax(56px, 1fr));
+    margin-top: 4px;
+    gap: 5px;
+  }
+  .panel-page .movement-grid>.movement {
+    min-height: 56px;
+    padding: 2px;
+  }
+  .panel-page .demo-card {
+    padding: 8px;
+    margin-bottom: 0;
+  }
+  .panel-page .events-card {
+    padding: 8px;
+    gap: 6px;
+  }
+  .panel-page .scarlette-events {
+    height: 100px;
+    max-height: 100px !important;
+    padding: 6px 8px !important;
+    overflow-y: auto !important;
+  }
   .panel-page .stop-band {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 10px 14px;
+    box-sizing: border-box;
+    height: var(--panel-stop-bar-height);
+    padding: var(--panel-stop-padding) max(14px, env(safe-area-inset-right, 0px)) calc(var(--panel-stop-padding) + var(--panel-safe-bottom)) max(14px, env(safe-area-inset-left, 0px));
     background: rgba(8, 9, 15, 0.96);
   }
-
-  /* Espacio para que DETENER no cubra el contenido */
-  .panel-page .app-shell {
-    padding-bottom: 70px !important;
+  .panel-page .stop-band>.emergency-stop {
+    height: var(--panel-stop-height);
+    min-height: var(--panel-stop-height);
   }
-
-  /* Joystick */
-  .panel-page .joystick-card {
-    gap: 4px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
-  /* Tarjeta DEMO */
-  .panel-page .demo-card {
-    padding: 10px;
-    margin-bottom: 12px;
-  }
-
-  /* Tarjeta Eventos */
-  .panel-page .events-card {
-    padding: 10px;
-  }
-
 }
