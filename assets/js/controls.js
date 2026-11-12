@@ -233,7 +233,7 @@ window.SCARLETTE_CONTROLS = (() => {
 
     const botones = document.querySelectorAll(".movement");
 
-    const movimientos = [
+    const comandosAdicionales = new Set([
       COMANDOS.diagonalIzquierda,
       COMANDOS.luces,
       COMANDOS.diagonalDerecha,
@@ -242,14 +242,17 @@ window.SCARLETTE_CONTROLS = (() => {
       COMANDOS.rectoDerecha,
       COMANDOS.musica,
       COMANDOS.giro360
-    ];
+    ]);
 
-    botones.forEach((boton, indice) => {
-      if (indice >= movimientos.length) return;
+    botones.forEach(boton => {
+      const idComando = Number(boton.dataset.command);
+      boton.disabled = !comandosAdicionales.has(idComando);
+      if (boton.disabled) return;
 
-      boton.disabled = false;
       boton.addEventListener("click", () => {
-        ejecutarMovimiento(movimientos[indice]);
+        const comandoActual = Number(boton.dataset.command);
+        if (!comandosAdicionales.has(comandoActual)) return;
+        ejecutarMovimiento(comandoActual);
       });
     });
 
