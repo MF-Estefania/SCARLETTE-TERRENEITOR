@@ -31,12 +31,6 @@ window.SCARLETTE_CONTROLS = (() => {
   // Solo una petici?n de movimiento en vuelo; se conserva la intenci?n m?s reciente.
   function ejecutarMovimiento(idComando) {
     if (!controlesActivos || paradaFallida) return;
-    if (idComando === COMANDOS.luces) {
-      // Cada pulsacion cuenta: no encolar, combinar ni repetir el comando 28.
-      if (lucesEnCurso || movimientoEnCurso || movimientoPendiente !== null || paradasPendientes) return;
-      lucesEnCurso = true;
-      mostrarLuces(true);
-    }
     movimientoPendiente = idComando === comandoEnCurso && !paradasPendientes ? null : idComando;
     return procesarMovimiento();
   }
@@ -44,7 +38,6 @@ window.SCARLETTE_CONTROLS = (() => {
   async function procesarMovimiento() {
     if (movimientoEnCurso || paradasPendientes || movimientoPendiente === null) return;
     const idComando = movimientoPendiente;
-    const revisionSolicitudLuces = revisionLuces;
     movimientoPendiente = null;
     const peticion = api.solicitar(`/vehiculos/${ID_VEHICULO}/movimientos`, {
       method: "POST",
@@ -53,25 +46,12 @@ window.SCARLETTE_CONTROLS = (() => {
     movimientoEnCurso = peticion;
     comandoEnCurso = idComando;
     try {
-      const resultado = await peticion;
-      if (idComando === COMANDOS.luces && revisionSolicitudLuces === revisionLuces) {
-        // No hay telemetria documentada de luces: HTTP confirma la solicitud,
-        // no la ejecucion fisica. No se infiere un ciclo tras la tercera pulsacion.
-        // Tras perder la referencia, una nueva solicitud inicia otra estimacion
-        // local (no una sincronizacion fisica). La cuarta queda fuera de secuencia.
-        pasoLuces = pasoLuces === null ? 1 : Math.min(pasoLuces + 1, 4);
-      }
-      return resultado;
+      return await peticion;
     } catch (error) {
-      if (idComando === COMANDOS.luces) invalidarEstimacionLuces();
       console.error("SCARLETTE: error de movimiento", error);
       // Un timeout no demuestra que el veh?culo est? detenido.
       void detenerVehiculo();
     } finally {
-      if (idComando === COMANDOS.luces) {
-        lucesEnCurso = false;
-        mostrarLuces();
-      }
       movimientoEnCurso = null;
       comandoEnCurso = null;
       void procesarMovimiento();
@@ -224,55 +204,6 @@ window.SCARLETTE_CONTROLS = (() => {
     });
   }
 
-  // Contador local no persistido; nunca representa confirmacion fisica.
-  // 0: sin referencia; 1: control activado; 2: encendidas; 3: apagadas.
-  // null: referencia perdida; 4: pulsaciones fuera de la secuencia conocida.
-  let pasoLuces = 0;
-  let lucesEnCurso = false;
-  let revisionLuces = 0;
-
-  function invalidarEstimacionLuces() {
-    pasoLuces = null;
-    revisionLuces += 1;
-  }
-
-  function mostrarLuces(pendiente = false) {
-    const boton = document.querySelector('[data-command="28"]');
-    const estado = document.getElementById("lights-status");
-    if (!boton) return;
-    const estados = {
-      0: ["desconocido", "Luces<br>sin confirmar", "Estado físico de luces desconocido. La secuencia local solo es estimada y supone que el vehículo parte del estado inicial."],
-      1: ["control", "Control<br>estimado", "Control activado, estimado tras la primera solicitud aceptada; luces físicas sin confirmar."],
-      2: ["encendidas", "Luces<br>ON estimado", "Luces encendidas, estado estimado tras la segunda solicitud aceptada; sin confirmación física."],
-      3: ["apagadas", "Luces<br>OFF estimado", "Luces apagadas, estado estimado tras la tercera solicitud aceptada; sin confirmación física."],
-      null: ["desconocido", "Luces<br>sin confirmar", "Estado de luces desconocido tras un error o reanudacion. Las proximas solicitudes reinician solo una estimacion local de tres pasos, suponiendo el estado inicial del vehiculo; no hay sincronizacion fisica."],
-      4: ["desconocido", "Luces<br>sin confirmar", "Estado desconocido: se superaron las tres pulsaciones conocidas. No se presupone un ciclo adicional ni un cuarto estado fisico."]
-    };
-    const [fase, etiqueta, descripcion] = estados[pasoLuces];
-    boton.dataset.lightsState = fase;
-    boton.classList.toggle("lights-active", fase === "encendidas");
-    // aria-pressed se reserva para un estado fisico conocido, no una estimacion.
-    boton.removeAttribute("aria-pressed");
-    boton.setAttribute("aria-busy", String(pendiente));
-    boton.disabled = pendiente;
-    boton.title = pendiente ? "Solicitud de luces pendiente; espera antes de volver a pulsar." : descripcion;
-    const texto = boton.querySelector("[data-lights-label]");
-    if (texto) texto.innerHTML = etiqueta;
-    if (estado) estado.textContent = pendiente ? "Solicitud de luces pendiente. " + descripcion : descripcion;
-  }
-
-  function prepararLuces() {
-    const boton = document.querySelector('[data-command="28"]');
-    if (!boton) return;
-    mostrarLuces();
-    boton.addEventListener("click", () => ejecutarMovimiento(COMANDOS.luces));
-    // Volver desde bfcache no permite asumir que el estado del vehiculo siga igual.
-    window.addEventListener("pagehide", () => {
-      invalidarEstimacionLuces();
-      mostrarLuces(lucesEnCurso);
-    });
-  }
-
   function vincularBoton(selector, accion) {
     const boton = document.querySelector(selector);
     if (!boton) return;
@@ -300,11 +231,11 @@ window.SCARLETTE_CONTROLS = (() => {
     prepararJoystick();
     vincularBoton(".emergency-stop", detenerVehiculo);
 
-    prepararLuces();
-    const botones = document.querySelectorAll('.movement:not([data-command="28"])');
+    const botones = document.querySelectorAll(".movement");
 
     const movimientos = [
       COMANDOS.diagonalIzquierda,
+      COMANDOS.luces,
       COMANDOS.diagonalDerecha,
       COMANDOS.rectoIzquierda,
       COMANDOS.postura,
