@@ -788,3 +788,15 @@
   color: #ffe0f3;
   filter: drop-shadow(0 0 5px var(--pink-light));
 }
+
+/* Confirmación manual del indicador, sin cambiar la cuadrícula de movimientos. */
+.lights-estimation { margin-top: 10px; color: var(--muted); font-size: 12px; }
+.lights-estimation summary { cursor: pointer; color: var(--pink-light); padding: 6px 0; }
+.lights-estimation p { margin: 6px 0; }
+.lights-estimation label { display: flex; align-items: flex-start; gap: 8px; }
+.lights-estimation input { accent-color: var(--pink); margin-top: 3px; flex-shrink: 0; }
+.lights-estimation button { margin-top: 8px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--text); }
+.lights-estimation button:disabled { opacity: .6; }
+.lights-estimation summary:focus-visible,
+.lights-estimation button:focus-visible { outline: 2px solid var(--pink-light); outline-offset: 3px; }
+.lights-estimation-status { font-size: 12px; color: var(--muted); margin: 6px 0 0; }

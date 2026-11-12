@@ -26,6 +26,8 @@ window.SCARLETTE_LIGHTS = (() => {
       controlEstimado = "unknown";
       lucesEstimadas = "unknown";
       revision += 1;
+      const confirmacion = document.getElementById("lights-initial-confirmed");
+      if (confirmacion) confirmacion.checked = false;
     }
     return mostrar(estado);
   }
@@ -43,7 +45,22 @@ window.SCARLETTE_LIGHTS = (() => {
     // Reutiliza la descripción existente sin cambiar etiquetas ni iconos.
     const detalle = document.getElementById("lights-status");
     if (detalle) detalle.textContent = descripcion;
+    actualizarConfirmacion();
     return true;
+  }
+
+  function actualizarConfirmacion() {
+    const casilla = document.getElementById("lights-initial-confirmed");
+    const boton = document.getElementById("lights-confirm-initial");
+    const estado = document.getElementById("lights-estimation-status");
+    if (boton) boton.disabled = !casilla?.checked || pendientes > 0;
+    if (estado) {
+      estado.textContent = pendientes > 0 ? "Solicitud de luces pendiente…" :
+        paso === null ? "Estado desconocido. Confirma el estado inicial para iniciar la estimación." :
+        paso === 0 ? "Referencia inicial confirmada por ti. La próxima pulsación estimará luces encendidas." :
+        lucesEstimadas === "on" ? "Luces encendidas (estimado, sin confirmación física)." :
+        "Luces apagadas (estimado, sin confirmación física).";
+    }
   }
 
   // Solo iniciar tras verificar fisicamente el estado anterior a la primera
@@ -82,9 +99,11 @@ window.SCARLETTE_LIGHTS = (() => {
     observadas.add(peticion);
     const referencia = revision;
     pendientes += 1;
+    actualizarConfirmacion();
     void Promise.resolve(peticion).then(() => {
       pendientes -= 1;
       if (referencia === revision) confirmPress();
+      else actualizarConfirmacion();
     }, () => {
       pendientes -= 1;
       setState("unknown");
@@ -93,5 +112,15 @@ window.SCARLETTE_LIGHTS = (() => {
 
   // panel.html carga este script después del marcado del botón.
   setState("unknown");
+  document.getElementById("lights-initial-confirmed")?.addEventListener("change", actualizarConfirmacion);
+  document.getElementById("lights-estimation-form")?.addEventListener("submit", evento => {
+    evento.preventDefault();
+    const casilla = document.getElementById("lights-initial-confirmed");
+    if (!casilla?.checked || !startEstimation({ initialStateConfirmed: true })) return;
+    casilla.checked = false;
+    actualizarConfirmacion();
+    const panel = document.getElementById("lights-estimation");
+    if (panel) panel.open = false;
+  });
   return Object.freeze({ setState, startEstimation, confirmPress, observeRequest, getEstimatedState });
 })();
