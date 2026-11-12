@@ -777,3 +777,14 @@
   outline: 2px solid var(--pink-light);
   outline-offset: 3px;
 }
+
+/* Luces: resplandor de estado estimado, sin alterar medidas ni distribucion. */
+.panel-page .movement[data-command="28"].lights-active {
+  border-color: var(--pink-light);
+  background: linear-gradient(145deg, #a52962, #4a1236);
+  box-shadow: inset 0 0 18px #f20b8388, 0 0 6px #ff66b5, 0 0 22px #f20b83cc;
+}
+.panel-page .movement[data-command="28"].lights-active .icon {
+  color: #ffe0f3;
+  filter: drop-shadow(0 0 5px var(--pink-light));
+}
