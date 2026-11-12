@@ -17,9 +17,12 @@ window.SCARLETTE_LIGHTS = (() => {
     if (!Object.prototype.hasOwnProperty.call(descripciones, estado)) {
       throw new RangeError("Estado de luces inválido: usa unknown, control, on u off.");
     }
-    // Una prueba visual manual no confirma el origen de la secuencia fisica.
-    paso = null;
-    revision += 1;
+    // Probar on/off/control solo cambia la apariencia: no inicia ni borra una
+    // estimacion ya confirmada. unknown invalida la referencia (errores incluidos).
+    if (estado === "unknown") {
+      paso = null;
+      revision += 1;
+    }
     return mostrar(estado);
   }
 
