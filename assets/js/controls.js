@@ -21,50 +21,179 @@ window.SCARLETTE_CONTROLS = (() => {
   });
 
   let controlesActivos = false;
-  let movimientoEnCurso = false;
+  let movimientoEnCurso = null;
+  let movimientoPendiente = null;
+  let paradasPendientes = 0;
+  let paradaFallida = false;
+  let reiniciarJoystick = () => {};
 
-  async function ejecutarMovimiento(idComando) {
-    if (!controlesActivos || movimientoEnCurso) return;
+  // Solo una petici?n de movimiento en vuelo; se conserva la intenci?n m?s reciente.
+  function ejecutarMovimiento(idComando) {
+    if (!controlesActivos || paradaFallida) return;
+    movimientoPendiente = idComando;
+    return procesarMovimiento();
+  }
 
-    movimientoEnCurso = true;
-
+  async function procesarMovimiento() {
+    if (movimientoEnCurso || paradasPendientes || movimientoPendiente === null) return;
+    const idComando = movimientoPendiente;
+    movimientoPendiente = null;
+    const peticion = api.solicitar(`/vehiculos/${ID_VEHICULO}/movimientos`, {
+      method: "POST",
+      body: JSON.stringify({ id_comando: idComando, origen: "scarlette_web" })
+    });
+    movimientoEnCurso = peticion;
     try {
-      const resultado = await api.solicitar(
-        `/vehiculos/${ID_VEHICULO}/movimientos`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            id_comando: idComando,
-            origen: "scarlette_web"
-          })
-        }
-      );
-
-      console.info("SCARLETTE: movimiento solicitado", resultado);
-      return resultado;
+      return await peticion;
     } catch (error) {
       console.error("SCARLETTE: error de movimiento", error);
-      alert(`No se pudo ejecutar el movimiento: ${error.message}`);
+      // Un timeout no demuestra que el veh?culo est? detenido.
+      void detenerVehiculo();
     } finally {
-      movimientoEnCurso = false;
+      movimientoEnCurso = null;
+      void procesarMovimiento();
     }
   }
 
-  async function detenerVehiculo() {
+  async function detenerVehiculo(reiniciar = true) {
     if (!controlesActivos) return;
-
+    if (reiniciar) reiniciarJoystick();
+    movimientoPendiente = null;
+    paradasPendientes += 1;
+    const anterior = movimientoEnCurso;
+    const solicitarStop = () => api.solicitar(
+      `/vehiculos/${ID_VEHICULO}/detener`, { method: "POST" }
+    );
+    let fallo = null;
     try {
-      const resultado = await api.solicitar(
-        `/vehiculos/${ID_VEHICULO}/detener`,
-        { method: "POST" }
-      );
-
-      console.info("SCARLETTE: STOP solicitado", resultado);
-      return resultado;
+      // No esperar al movimiento para enviar la parada prioritaria.
+      try { await solicitarStop(); } catch (error) { fallo = error; }
+      if (anterior) {
+        await anterior.catch(() => {});
+        // Reafirmar STOP despu?s de la petici?n antigua, incluso si fall?.
+        try { await solicitarStop(); fallo = null; } catch (error) { fallo = error; }
+      }
+      if (fallo) throw fallo;
+      paradaFallida = false;
     } catch (error) {
+      paradaFallida = true;
+      movimientoPendiente = null;
       console.error("SCARLETTE: error de STOP", error);
-      alert(`No se pudo enviar STOP: ${error.message}`);
+      alert(`No se pudo confirmar STOP. Reintenta DETENER: ${error.message}`);
+    } finally {
+      paradasPendientes -= 1;
+      if (!paradaFallida) void procesarMovimiento();
     }
+    // El backend debe ordenar comandos tambi?n en el veh?culo: una respuesta HTTP
+    // no garantiza que una orden publicada en AWS ya se haya aplicado f?sicamente.
+  }
+
+  function prepararJoystick() {
+    const centro = document.querySelector(".joystick-center");
+    const joystick = document.querySelector(".joystick");
+    if (!centro || !joystick) return;
+    centro.disabled = false;
+    joystick.setAttribute("aria-label", "Joystick de cuatro direcciones");
+    const direcciones = {
+      up: COMANDOS.avanzar, down: COMANDOS.retroceder,
+      left: COMANDOS.giroIzquierda, right: COMANDOS.giroDerecha
+    };
+    const teclas = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
+    let puntero = null;
+    let tecla = null;
+    let activa = null;
+    let inicioX = 0;
+    let inicioY = 0;
+    const recorrido = () => Math.max(0,
+      (joystick.clientWidth - centro.offsetWidth) / 2 - 4);
+
+    function dibujar(x = 0, y = 0, direccion = null) {
+      centro.style.setProperty("--joystick-x", `${x}px`);
+      centro.style.setProperty("--joystick-y", `${y}px`);
+      joystick.querySelectorAll(".direction").forEach(boton => {
+        boton.classList.toggle("is-active", Boolean(direccion && boton.classList.contains(direccion)));
+      });
+    }
+
+    reiniciarJoystick = () => {
+      const previo = puntero;
+      puntero = null;
+      tecla = null;
+      activa = null;
+      centro.classList.remove("is-dragging");
+      dibujar();
+      if (previo !== null && centro.hasPointerCapture(previo)) centro.releasePointerCapture(previo);
+    };
+
+    function cambiar(direccion, x, y) {
+      dibujar(x, y, direccion);
+      if (direccion === activa) return;
+      activa = direccion;
+      if (direccion) ejecutarMovimiento(direcciones[direccion]);
+      else {
+        // La zona neutral detiene sin terminar la captura del gesto.
+        void detenerVehiculo(false);
+      }
+    }
+
+    centro.addEventListener("pointerdown", evento => {
+      if (!evento.isPrimary || evento.button !== 0 || puntero !== null || tecla) return;
+      evento.preventDefault();
+      centro.focus({ preventScroll: true });
+      puntero = evento.pointerId;
+      inicioX = evento.clientX;
+      inicioY = evento.clientY;
+      centro.classList.add("is-dragging");
+      centro.setPointerCapture(puntero);
+    });
+    centro.addEventListener("pointermove", evento => {
+      if (evento.pointerId !== puntero) return;
+      const dx = evento.clientX - inicioX;
+      const dy = evento.clientY - inicioY;
+      const distancia = Math.hypot(dx, dy);
+      const limite = recorrido();
+      const escala = distancia ? Math.min(1, limite / distancia) : 0;
+      const direccion = distancia <= Math.max(8, limite * 0.24) ? null :
+        Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "left" : "right") : (dy < 0 ? "up" : "down");
+      cambiar(direccion, dx * escala, dy * escala);
+    });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(tipo => {
+      centro.addEventListener(tipo, evento => {
+        if (evento.pointerId === puntero) void detenerVehiculo();
+      });
+    });
+    centro.addEventListener("keydown", evento => {
+      if (["Escape", " ", "Enter"].includes(evento.key)) {
+        evento.preventDefault();
+        if (!evento.repeat) void detenerVehiculo();
+        return;
+      }
+      const direccion = teclas[evento.key];
+      if (!direccion) return;
+      evento.preventDefault();
+      if (evento.repeat || puntero !== null) return;
+      tecla = evento.key;
+      const r = recorrido();
+      cambiar(direccion, direccion === "left" ? -r : direccion === "right" ? r : 0,
+        direccion === "up" ? -r : direccion === "down" ? r : 0);
+    });
+    centro.addEventListener("keyup", evento => {
+      if (teclas[evento.key]) evento.preventDefault();
+      if (evento.key === tecla) void detenerVehiculo();
+    });
+    // Solo el click de tecnolog?a asistiva; el click sintetizado del gesto se ignora.
+    centro.addEventListener("click", evento => {
+      if (evento.detail === 0 && !tecla && puntero === null) void detenerVehiculo();
+    });
+    const perderControl = () => {
+      if (puntero !== null || tecla || activa) void detenerVehiculo();
+    };
+    centro.addEventListener("blur", perderControl);
+    window.addEventListener("blur", perderControl);
+    window.addEventListener("resize", perderControl);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) perderControl();
+    });
   }
 
   function vincularBoton(selector, accion) {
@@ -91,7 +220,7 @@ window.SCARLETTE_CONTROLS = (() => {
     vincularBoton(".direction.right",
       () => ejecutarMovimiento(COMANDOS.giroDerecha));
 
-    vincularBoton(".joystick-center", detenerVehiculo);
+    prepararJoystick();
     vincularBoton(".emergency-stop", detenerVehiculo);
 
     const botones = document.querySelectorAll(".movement");

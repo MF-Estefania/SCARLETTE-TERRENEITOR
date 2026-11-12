@@ -761,3 +761,19 @@
  .panel-page .demo-disclosure:not([open])>.demo-card{display:none}
  .panel-page .demo-disclosure[open]>.demo-card{margin-top:6px}
 }
+
+/* Palanca virtual: translate independiente conserva los transforms adaptables. */
+.panel-page .joystick-center {
+  translate: var(--joystick-x, 0px) var(--joystick-y, 0px);
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+  z-index: 2;
+}
+.panel-page .joystick-center.is-dragging { cursor: grabbing; }
+.panel-page .direction.is-active { color: var(--pink-light); filter: drop-shadow(0 0 6px var(--pink)); }
+.panel-page .joystick-center:focus-visible,
+.panel-page .direction:focus-visible {
+  outline: 2px solid var(--pink-light);
+  outline-offset: 3px;
+}
