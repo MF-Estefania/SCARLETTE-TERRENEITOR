@@ -23,6 +23,7 @@ window.SCARLETTE_CONTROLS = (() => {
   let controlesActivos = false;
   let movimientoEnCurso = null;
   let movimientoPendiente = null;
+  let comandoEnCurso = null;
   let paradasPendientes = 0;
   let paradaFallida = false;
   let reiniciarJoystick = () => {};
@@ -30,7 +31,7 @@ window.SCARLETTE_CONTROLS = (() => {
   // Solo una petici?n de movimiento en vuelo; se conserva la intenci?n m?s reciente.
   function ejecutarMovimiento(idComando) {
     if (!controlesActivos || paradaFallida) return;
-    movimientoPendiente = idComando;
+    movimientoPendiente = idComando === comandoEnCurso && !paradasPendientes ? null : idComando;
     return procesarMovimiento();
   }
 
@@ -43,6 +44,7 @@ window.SCARLETTE_CONTROLS = (() => {
       body: JSON.stringify({ id_comando: idComando, origen: "scarlette_web" })
     });
     movimientoEnCurso = peticion;
+    comandoEnCurso = idComando;
     try {
       return await peticion;
     } catch (error) {
@@ -51,13 +53,14 @@ window.SCARLETTE_CONTROLS = (() => {
       void detenerVehiculo();
     } finally {
       movimientoEnCurso = null;
+      comandoEnCurso = null;
       void procesarMovimiento();
     }
   }
 
-  async function detenerVehiculo(reiniciar = true) {
+  async function detenerVehiculo() {
     if (!controlesActivos) return;
-    if (reiniciar) reiniciarJoystick();
+    reiniciarJoystick();
     movimientoPendiente = null;
     paradasPendientes += 1;
     const anterior = movimientoEnCurso;
@@ -93,6 +96,7 @@ window.SCARLETTE_CONTROLS = (() => {
     const joystick = document.querySelector(".joystick");
     if (!centro || !joystick) return;
     centro.disabled = false;
+    centro.setAttribute("aria-label", "Palanca: arrastra o usa las flechas para seleccionar movimiento. Pulsa sin arrastrar, Enter, espacio o Escape para STOP");
     joystick.setAttribute("aria-label", "Joystick de cuatro direcciones");
     const direcciones = {
       up: COMANDOS.avanzar, down: COMANDOS.retroceder,
@@ -102,6 +106,7 @@ window.SCARLETTE_CONTROLS = (() => {
     let puntero = null;
     let tecla = null;
     let activa = null;
+    let arrastrado = false;
     let inicioX = 0;
     let inicioY = 0;
     const recorrido = () => Math.max(0,
@@ -120,6 +125,7 @@ window.SCARLETTE_CONTROLS = (() => {
       puntero = null;
       tecla = null;
       activa = null;
+      arrastrado = false;
       centro.classList.remove("is-dragging");
       dibujar();
       if (previo !== null && centro.hasPointerCapture(previo)) centro.releasePointerCapture(previo);
@@ -127,13 +133,10 @@ window.SCARLETTE_CONTROLS = (() => {
 
     function cambiar(direccion, x, y) {
       dibujar(x, y, direccion);
-      if (direccion === activa) return;
+      // El centro solo es visual: conserva la ultima seleccion del gesto.
+      if (!direccion || direccion === activa) return;
       activa = direccion;
-      if (direccion) ejecutarMovimiento(direcciones[direccion]);
-      else {
-        // La zona neutral detiene sin terminar la captura del gesto.
-        void detenerVehiculo(false);
-      }
+      ejecutarMovimiento(direcciones[direccion]);
     }
 
     centro.addEventListener("pointerdown", evento => {
@@ -141,6 +144,7 @@ window.SCARLETTE_CONTROLS = (() => {
       evento.preventDefault();
       centro.focus({ preventScroll: true });
       puntero = evento.pointerId;
+      arrastrado = false;
       inicioX = evento.clientX;
       inicioY = evento.clientY;
       centro.classList.add("is-dragging");
@@ -155,11 +159,15 @@ window.SCARLETTE_CONTROLS = (() => {
       const escala = distancia ? Math.min(1, limite / distancia) : 0;
       const direccion = distancia <= Math.max(8, limite * 0.24) ? null :
         Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "left" : "right") : (dy < 0 ? "up" : "down");
+      if (direccion) arrastrado = true;
       cambiar(direccion, dx * escala, dy * escala);
     });
     ["pointerup", "pointercancel", "lostpointercapture"].forEach(tipo => {
       centro.addEventListener(tipo, evento => {
-        if (evento.pointerId === puntero) void detenerVehiculo();
+        if (evento.pointerId !== puntero) return;
+        const pulsacionStop = tipo === "pointerup" && !arrastrado;
+        reiniciarJoystick();
+        if (pulsacionStop) void detenerVehiculo();
       });
     });
     centro.addEventListener("keydown", evento => {
@@ -179,14 +187,14 @@ window.SCARLETTE_CONTROLS = (() => {
     });
     centro.addEventListener("keyup", evento => {
       if (teclas[evento.key]) evento.preventDefault();
-      if (evento.key === tecla) void detenerVehiculo();
+      if (evento.key === tecla) reiniciarJoystick();
     });
-    // Solo el click de tecnolog?a asistiva; el click sintetizado del gesto se ignora.
+    // El puntero ya se procesa en pointerup; solo aceptar activacion asistiva aqui.
     centro.addEventListener("click", evento => {
-      if (evento.detail === 0 && !tecla && puntero === null) void detenerVehiculo();
+      if (evento.detail === 0 && !evento.pointerType && !tecla && puntero === null) void detenerVehiculo();
     });
     const perderControl = () => {
-      if (puntero !== null || tecla || activa) void detenerVehiculo();
+      if (puntero !== null || tecla || activa) reiniciarJoystick();
     };
     centro.addEventListener("blur", perderControl);
     window.addEventListener("blur", perderControl);
