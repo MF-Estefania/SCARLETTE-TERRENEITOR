@@ -6,7 +6,7 @@ import sys
 import tempfile
 from test_lights_browser import ROOT
 sys.path.insert(0, str(pathlib.Path(tempfile.gettempdir()) / 'scarlette-browser-tools'))
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 
 def fixture(role, navigation=True):
@@ -35,7 +35,7 @@ def fixture(role, navigation=True):
     };
     window.WebSocket=class extends EventTarget {
       static OPEN=1; static CONNECTING=0;
-      constructor(){super();sockets++;this.readyState=1;queueMicrotask(()=>this.dispatchEvent(new Event('open')));}
+      constructor(){super();window.testSocket=this;sockets++;this.readyState=1;queueMicrotask(()=>this.dispatchEvent(new Event('open')));}
       close(){this.readyState=3;this.dispatchEvent(new Event('close'));}
     };
     '''.replace('ROLE', json.dumps(role))
@@ -58,6 +58,8 @@ def main():
                     if role=='administradora':
                         assert page.locator('[role=tab]').count()==0
                         assert page.locator('.app-shell > .control-layout').count()==1
+                        assert page.locator('.app-shell > .events-disclosure').count()==1
+                        assert page.get_by_text('Actividad en tiempo real',exact=True).count()==0
                         # Compare geometry against the same fixture without navigation script.
                         selectors=['.control-layout','.stop-band','.events-disclosure','.connections']
                         geometry=[page.locator(s).bounding_box() for s in selectors]
@@ -67,20 +69,40 @@ def main():
                     else:
                         control=page.get_by_role('tab',name='CONTROL',exact=True)
                         monitor=page.get_by_role('tab',name='MONITOREO',exact=True)
-                        assert control.get_attribute('aria-selected')=='true'
+                        expect(control).to_have_attribute('aria-selected','true')
                         page.evaluate("window.originalJoystick=document.querySelector('.joystick');window.originalEvents=document.querySelector('.events-disclosure')")
                         count=page.evaluate('calls.length')
-                        monitor.click()
-                        assert page.get_by_role('tabpanel').inner_text()=='El monitoreo estará disponible próximamente'
+                        assert page.locator('#user-control-panel .events-disclosure').count()==0
+                        assert page.locator('#user-monitoring-panel .events-disclosure').count()==1
                         assert not page.locator('.events-disclosure').is_visible()
+                        page.evaluate("testSocket.dispatchEvent(new MessageEvent('message',{data:JSON.stringify({tipo:'movimiento_individual',comando:'ANTES'})}))")
+                        assert page.locator('.scarlette-events').inner_text().count('ANTES')==1
+                        page.evaluate("window.originalList=document.querySelector('.scarlette-events');window.originalEvent=originalList.firstElementChild")
+                        monitor.click()
+                        assert page.get_by_role('heading',name='Actividad en tiempo real',exact=True).is_visible()
+                        assert page.locator('.events-disclosure').is_visible()
+                        assert page.locator('.scarlette-events').inner_text().count('ANTES')==1
+                        page.evaluate("testSocket.dispatchEvent(new MessageEvent('message',{data:JSON.stringify({tipo:'movimiento_individual',comando:'DURANTE'})}))")
+                        assert page.locator('.scarlette-events').inner_text().count('DURANTE')==1
+                        assert page.evaluate("originalList===document.querySelector('.scarlette-events') && originalList.children[1]===originalEvent")
                         assert all(page.locator('.connection').nth(i).is_visible() for i in range(3))
                         control.tap()
+                        expect(control).to_have_attribute('aria-selected','true')
                         control.focus(); page.keyboard.press('ArrowRight')
                         assert monitor.evaluate('(e)=>e===document.activeElement')
                         page.keyboard.press('Enter')
-                        assert monitor.get_attribute('aria-selected')=='true'
-                        page.keyboard.press('Home'); page.keyboard.press('Space')
-                        assert control.get_attribute('aria-selected')=='true'
+                        expect(monitor).to_have_attribute('aria-selected','true')
+                        page.keyboard.press('Home')
+                        expect(control).to_be_focused()
+                        page.keyboard.press('Space')
+                        expect(control).to_have_attribute('aria-selected','true')
+                        assert page.evaluate('calls.length')==count and page.evaluate('sockets')==1
+                        assert page.locator('.scarlette-events').inner_text().count('ANTES')==1
+                        assert page.locator('.scarlette-events').inner_text().count('DURANTE')==1
+                        page.evaluate("for(let i=0;i<45;i++) testSocket.dispatchEvent(new MessageEvent('message',{data:JSON.stringify({tipo:'movimiento_individual',comando:'EVENTO-'+i})}))")
+                        assert page.locator('.scarlette-events > div').count()==40
+                        assert 'EVENTO-44' in page.locator('.scarlette-events > div').first.inner_text()
+                        assert 'EVENTO-5' in page.locator('.scarlette-events > div').last.inner_text()
                         assert page.evaluate('calls.length')==count and page.evaluate('sockets')==1
                         assert page.evaluate("originalJoystick===document.querySelector('.joystick') && originalEvents===document.querySelector('.events-disclosure')")
                         # Keyboard movement remains active after blur: navigation must stop it.
@@ -89,7 +111,7 @@ def main():
                         page.evaluate("stopMode='pending'")
                         monitor.click()
                         page.wait_for_function("typeof finishStop==='function'")
-                        assert control.get_attribute('aria-selected')=='true'
+                        expect(control).to_have_attribute('aria-selected','true')
                         stops=page.evaluate("calls.filter(c=>c.path.endsWith('/detener')).length")
                         monitor.click()
                         assert page.evaluate("calls.filter(c=>c.path.endsWith('/detener')).length")==stops
@@ -98,7 +120,7 @@ def main():
                         control.click();page.evaluate("stopMode='fail'")
                         center.focus();page.keyboard.press('ArrowDown');monitor.click()
                         page.wait_for_function("document.activeElement.id==='user-control-tab'")
-                        assert control.get_attribute('aria-selected')=='true'
+                        expect(control).to_have_attribute('aria-selected','true')
                         page.evaluate("stopMode='ok'");monitor.click()
                         page.wait_for_function("document.getElementById('user-monitoring-tab').getAttribute('aria-selected')==='true'")
                         assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')

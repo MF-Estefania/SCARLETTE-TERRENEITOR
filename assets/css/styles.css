@@ -807,5 +807,8 @@
 .panel-page.user-navigation .user-panel-tabs button:focus-visible,.panel-page.user-navigation .user-monitoring-panel:focus-visible{outline:2px solid var(--pink-light);outline-offset:3px}
 .panel-page.user-navigation .user-control-panel{display:contents}
 .panel-page.user-navigation [role="tabpanel"][hidden]{display:none!important}
-.panel-page.user-navigation .user-monitoring-panel{min-width:0;padding:24px;text-align:center;overflow-wrap:anywhere}
+.panel-page.user-navigation .user-monitoring-panel{min-width:0;padding:24px;text-align:left;overflow-wrap:anywhere}
 .panel-page.user-navigation .user-monitoring-panel p{margin:0}
+
+/* Actividad de MONITOREO: no afecta el panel de ADMINISTRADOR. */
+.panel-page.user-navigation .user-monitoring-panel>.events-disclosure{margin-top:16px}

@@ -20,16 +20,21 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   panels[0].className = "user-control-panel";
   panels[1].className = "user-monitoring-panel glass-card";
   panels[1].tabIndex = 0;
-  const message = document.createElement("p");
-  message.textContent = "El monitoreo estará disponible próximamente";
-  panels[1].append(message);
+  const heading = document.createElement("h2");
+  heading.className = "card-heading";
+  heading.textContent = "Actividad en tiempo real";
+  panels[1].append(heading);
   panels[1].hidden = true;
 
   const layout = shell.querySelector(".control-layout");
   shell.insertBefore(navigation, layout);
   shell.insertBefore(panels[0], layout);
   // Mover conserva identidad, estado y manejadores de todos los controles.
-  panels[0].append(layout, shell.querySelector(".stop-band"), shell.querySelector(".events-disclosure"));
+  panels[0].append(layout, shell.querySelector(".stop-band"));
+  const events = shell.querySelector(".events-disclosure");
+  panels[1].append(events);
+  // Mostrar la actividad también en móvil, conservando el desplegable accesible.
+  events.open = true;
   panels[0].after(panels[1]);
   document.body.classList.add("user-navigation");
 
