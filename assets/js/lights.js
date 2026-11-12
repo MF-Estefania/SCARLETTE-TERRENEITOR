@@ -3,6 +3,8 @@
 // Indicador visual aislado: no solicita ni confirma cambios fisicos del vehiculo.
 window.SCARLETTE_LIGHTS = (() => {
   let paso = null;
+  let controlEstimado = "unknown";
+  let lucesEstimadas = "unknown";
   let revision = 0;
   let pendientes = 0;
   const observadas = new WeakSet();
@@ -21,6 +23,8 @@ window.SCARLETTE_LIGHTS = (() => {
     // estimacion ya confirmada. unknown invalida la referencia (errores incluidos).
     if (estado === "unknown") {
       paso = null;
+      controlEstimado = "unknown";
+      lucesEstimadas = "unknown";
       revision += 1;
     }
     return mostrar(estado);
@@ -48,17 +52,28 @@ window.SCARLETTE_LIGHTS = (() => {
     if (initialStateConfirmed !== true || pendientes) return false;
     revision += 1;
     paso = 0;
+    controlEstimado = "initial";
+    lucesEstimadas = "unknown";
     mostrar("unknown");
     return true;
   }
 
   function confirmPress() {
-    if (paso === null || paso >= 3) {
+    if (paso === null) {
       setState("unknown");
       return;
     }
     paso += 1;
-    mostrar(["unknown", "control", "on", "off"][paso]);
+    controlEstimado = "active";
+    // Primera pulsacion: control y luces encendidos; las siguientes alternan
+    // solo las luces mientras siga siendo valida la referencia fisica inicial.
+    lucesEstimadas = lucesEstimadas === "on" ? "off" : "on";
+    mostrar(lucesEstimadas);
+  }
+
+  // Solo lectura: el estado visual manual no equivale a una estimacion fisica.
+  function getEstimatedState() {
+    return Object.freeze({ control: controlEstimado, lights: lucesEstimadas, step: paso });
   }
 
   // Observa la peticion ya enviada por controls.js; no crea ni repite comandos.
@@ -78,5 +93,5 @@ window.SCARLETTE_LIGHTS = (() => {
 
   // panel.html carga este script después del marcado del botón.
   setState("unknown");
-  return Object.freeze({ setState, startEstimation, confirmPress, observeRequest });
+  return Object.freeze({ setState, startEstimation, confirmPress, observeRequest, getEstimatedState });
 })();
