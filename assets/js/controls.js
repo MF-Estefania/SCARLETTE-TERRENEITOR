@@ -45,6 +45,7 @@ window.SCARLETTE_CONTROLS = (() => {
     });
     movimientoEnCurso = peticion;
     comandoEnCurso = idComando;
+    if (idComando === COMANDOS.luces) window.SCARLETTE_LIGHTS?.observeRequest?.(peticion);
     try {
       return await peticion;
     } catch (error) {
