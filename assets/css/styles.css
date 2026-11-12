@@ -800,3 +800,12 @@
 .lights-estimation summary:focus-visible,
 .lights-estimation button:focus-visible { outline: 2px solid var(--pink-light); outline-offset: 3px; }
 .lights-estimation-status { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+/* Fase 4.2: estilos exclusivos de la sesión USUARIO. */
+.panel-page.user-navigation .user-panel-tabs{display:flex;gap:8px;margin-bottom:16px;min-width:0}
+.panel-page.user-navigation .user-panel-tabs button{flex:1;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font-weight:700;cursor:pointer}
+.panel-page.user-navigation .user-panel-tabs [aria-selected="true"]{border-color:var(--pink-light);color:var(--pink-light);background:#ff349f18}
+.panel-page.user-navigation .user-panel-tabs button:focus-visible,.panel-page.user-navigation .user-monitoring-panel:focus-visible{outline:2px solid var(--pink-light);outline-offset:3px}
+.panel-page.user-navigation .user-control-panel{display:contents}
+.panel-page.user-navigation [role="tabpanel"][hidden]{display:none!important}
+.panel-page.user-navigation .user-monitoring-panel{min-width:0;padding:24px;text-align:center;overflow-wrap:anywhere}
+.panel-page.user-navigation .user-monitoring-panel p{margin:0}

@@ -27,6 +27,7 @@ window.SCARLETTE_CONTROLS = (() => {
   let paradasPendientes = 0;
   let paradaFallida = false;
   let reiniciarJoystick = () => {};
+  let joystickSolicitoMovimiento = false;
 
   // Solo una petici?n de movimiento en vuelo; se conserva la intenci?n m?s reciente.
   function ejecutarMovimiento(idComando) {
@@ -79,6 +80,7 @@ window.SCARLETTE_CONTROLS = (() => {
       }
       if (fallo) throw fallo;
       paradaFallida = false;
+      joystickSolicitoMovimiento = false;
     } catch (error) {
       paradaFallida = true;
       movimientoPendiente = null;
@@ -135,6 +137,7 @@ window.SCARLETTE_CONTROLS = (() => {
       // El centro solo es visual: conserva la ultima seleccion del gesto.
       if (!direccion || direccion === activa) return;
       activa = direccion;
+      joystickSolicitoMovimiento = true;
       ejecutarMovimiento(direcciones[direccion]);
     }
 
@@ -374,6 +377,13 @@ window.SCARLETTE_CONTROLS = (() => {
 
   return Object.freeze({
     ejecutarMovimiento,
-    detenerVehiculo
+    detenerVehiculo,
+    async prepararOcultacion() {
+      // No duplicar una parada ya en vuelo; conservar CONTROL en ese caso.
+      if (paradasPendientes) return false;
+      if (!joystickSolicitoMovimiento) return true;
+      await detenerVehiculo();
+      return !paradaFallida;
+    }
   });
 })();
