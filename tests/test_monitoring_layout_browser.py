@@ -39,6 +39,12 @@ def geometry(page):
     return [page.locator(s).bounding_box() for s in ['.topbar','.connections','.control-layout','.joystick','.movement-grid','.demo-card','.stop-band','.page-footer']]
 
 
+def load(page,html):
+    page.goto('https://scarlette.test')
+    page.set_content(html)
+    page.wait_for_function('window.SCARLETTE_USUARIO && stateActive===0')
+
+
 def main():
     data=urllib.request.urlopen('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',timeout=20).read()
     assert base64.b64encode(hashlib.sha384(data).digest()).decode()=='QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH'
@@ -51,12 +57,9 @@ def main():
             for width,height in SIZES:
                 page=browser.new_page(viewport={'width':width,'height':height},has_touch=True)
                 page.route('**/*',lambda route:route.fulfill(status=200,body='<html></html>') if route.request.is_navigation_request() else route.abort())
-                page.goto('https://scarlette.test')
-                page.set_content(content('usuario',bootstrap,baseline=True))
-                page.wait_for_function('window.SCARLETTE_USUARIO && stateActive===0')
+                load(page,content('usuario',bootstrap,baseline=True))
                 before=geometry(page)
-                page.set_content(content('usuario',bootstrap))
-                page.wait_for_function('window.SCARLETTE_USUARIO && stateActive===0')
+                load(page,content('usuario',bootstrap))
                 assert before==geometry(page),('CONTROL',width,height)
                 control=page.get_by_role('tab',name='CONTROL',exact=True)
                 monitor=page.get_by_role('tab',name='MONITOREO',exact=True)
@@ -113,12 +116,14 @@ def main():
                 assert table_rect['y']+table_rect['height']<=footer_rect['y']+1
                 page.screenshot(path=str(screenshots/f'{width}x{height}.png'))
                 control.click();expect(control).to_have_attribute('aria-selected','true')
+                # Esperar la actualización del contenido nativo de <details> al mostrar CONTROL.
+                for _ in range(20):
+                    if before==geometry(page):break
+                    page.wait_for_timeout(25)
                 assert before==geometry(page),('CONTROL restored',width,height)
-                page.set_content(content('administradora',bootstrap,baseline=True))
-                page.wait_for_function('window.SCARLETTE_USUARIO && stateActive===0')
+                load(page,content('administradora',bootstrap,baseline=True))
                 admin=geometry(page)
-                page.set_content(content('administradora',bootstrap))
-                page.wait_for_function('window.SCARLETTE_USUARIO && stateActive===0')
+                load(page,content('administradora',bootstrap))
                 assert admin==geometry(page),('ADMINISTRADOR',width,height)
                 assert page.evaluate('errors')==[]
                 print(json.dumps({'ok':True,'viewport':[width,height],'document_scroll':False,'internal_keyboard_touch':True,'unchanged_control_admin':True}),flush=True)
