@@ -66,6 +66,9 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
           button.tabIndex = i === selected ? 0 : -1;
         });
         tab.focus();
+        document.dispatchEvent(new CustomEvent("scarlette:panel-cambiado", {
+          detail: { panel: index === 1 ? "monitoring" : "control" }
+        }));
       } finally {
         switching = false;
       }

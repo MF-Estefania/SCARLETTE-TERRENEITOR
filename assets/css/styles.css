@@ -812,3 +812,17 @@
 
 /* Actividad de MONITOREO: no afecta el panel de ADMINISTRADOR. */
 .panel-page.user-navigation .user-monitoring-panel>.events-disclosure{margin-top:16px}
+/* Historial persistente: alcance exclusivo de la interfaz USUARIO. */
+.panel-page.user-navigation .movement-history{min-width:0;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.panel-page.user-navigation .history-note,.panel-page.user-navigation .history-status{font-size:.875rem;line-height:1.5;margin:12px 0;color:var(--text)}
+.panel-page.user-navigation .history-note{opacity:.8}
+.panel-page.user-navigation .history-table-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:12px;margin-top:12px}
+.panel-page.user-navigation .history-table{width:100%;min-width:520px;border-collapse:collapse;font-size:.9rem;text-align:left}
+.panel-page.user-navigation .history-table th{background:#ff349f18;color:var(--pink-light);font-weight:700}
+.panel-page.user-navigation .history-table th,.panel-page.user-navigation .history-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere;max-width:260px}
+.panel-page.user-navigation .history-table tbody tr:last-child td{border-bottom:0}
+.panel-page.user-navigation .history-table tbody tr:nth-child(even){background:#ffffff04}
+.panel-page.user-navigation .history-retry{min-height:44px;width:auto;margin:12px 0;padding:10px 16px}
+.panel-page.user-navigation .history-retry[hidden],.panel-page.user-navigation .history-table-scroll[hidden]{display:none!important}
+.panel-page.user-navigation .history-retry:focus-visible,.panel-page.user-navigation .history-table-scroll:focus-visible{outline:2px solid var(--pink-light);outline-offset:3px}
+@media(max-width:575.98px){.panel-page.user-navigation .user-monitoring-panel{padding:14px}.panel-page.user-navigation .history-table th,.panel-page.user-navigation .history-table td{padding:10px}}

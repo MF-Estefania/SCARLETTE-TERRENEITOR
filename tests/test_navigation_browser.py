@@ -30,7 +30,7 @@ def fixture(role, navigation=True):
       if(path.endsWith('/detener') && stopMode==='pending') await new Promise(r=>window.finishStop=r);
       const fail=path.endsWith('/detener') && stopMode==='fail';
       const data=path==='/auth/me'?{rol:ROLE}:path.endsWith('/ws-ticket')?{ticket:'fake'}:
-        path.endsWith('/demos')?[{activo:true,id_demo:9,nombre:'Demo'}]:{};
+        path.endsWith('/demos')?[{activo:true,id_demo:9,nombre:'Demo'}]:path.endsWith('/historial')?[]:{};
       return {ok:!fail,status:fail?503:200,text:async()=>JSON.stringify(fail?{detail:'STOP simulado'}:data)};
     };
     window.WebSocket=class extends EventTarget {
@@ -96,14 +96,14 @@ def main():
                         expect(control).to_be_focused()
                         page.keyboard.press('Space')
                         expect(control).to_have_attribute('aria-selected','true')
-                        assert page.evaluate('calls.length')==count and page.evaluate('sockets')==1
+                        assert page.evaluate("calls.filter(c=>!c.path.endsWith('/historial')).length")==count and page.evaluate('sockets')==1
                         assert page.locator('.scarlette-events').inner_text().count('ANTES')==1
                         assert page.locator('.scarlette-events').inner_text().count('DURANTE')==1
                         page.evaluate("for(let i=0;i<45;i++) testSocket.dispatchEvent(new MessageEvent('message',{data:JSON.stringify({tipo:'movimiento_individual',comando:'EVENTO-'+i})}))")
                         assert page.locator('.scarlette-events > div').count()==40
                         assert 'EVENTO-44' in page.locator('.scarlette-events > div').first.inner_text()
                         assert 'EVENTO-5' in page.locator('.scarlette-events > div').last.inner_text()
-                        assert page.evaluate('calls.length')==count and page.evaluate('sockets')==1
+                        assert page.evaluate("calls.filter(c=>!c.path.endsWith('/historial')).length")==count and page.evaluate('sockets')==1
                         assert page.evaluate("originalJoystick===document.querySelector('.joystick') && originalEvents===document.querySelector('.events-disclosure')")
                         # Keyboard movement remains active after blur: navigation must stop it.
                         center=page.locator('.joystick-center'); center.focus();page.keyboard.press('ArrowUp')
