@@ -52,7 +52,7 @@ def main():
                 expect(card.locator('dd').nth(1)).to_have_text('E')
                 expect(card.locator('dd').nth(2)).to_have_text('2026-11-12 21:42:53')
                 expect(card).to_contain_text('Registro de la API; no confirma ejecución física')
-                assert page.locator('#user-monitoring-panel > section').first.get_attribute('id')=='last-movement'
+                assert page.locator('#user-monitoring-panel .last-movement').count()==1
                 assert count(page)==1
                 assert all('Disponible' in page.locator('.connection-state').nth(i).inner_text() for i in [1,2])
                 for _ in range(2):

@@ -839,3 +839,83 @@
 .panel-page.user-navigation .last-movement-retry:focus-visible{outline:2px solid var(--pink-light);outline-offset:3px}
 .panel-page.user-navigation .last-movement-fields[hidden],.panel-page.user-navigation .last-movement-retry[hidden]{display:none!important}
 @media(max-width:575.98px){.panel-page.user-navigation .last-movement{padding:14px}.panel-page.user-navigation .last-movement-fields{grid-template-columns:1fr}}
+/* MONITOREO ocupa el viewport; cada región conserva su contenido desplazable.
+   :has limita también html/body/cabecera al panel USUARIO actualmente visible. */
+html:has(.user-navigation #user-monitoring-panel:not([hidden])){height:100%;overflow:hidden}
+body.panel-page.user-navigation:has(#user-monitoring-panel:not([hidden])){height:100vh;height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .topbar{flex:0 0 auto;min-width:0;padding:8px max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));gap:8px 16px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .brand>.icon{width:30px;height:30px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .brand-name{font-size:20px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .brand p{font-size:10px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .topbar>.logout-button{min-height:44px;padding:6px 10px;font-size:12px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));min-width:0;gap:6px;padding:0;border:0}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection{min-width:0;padding:5px 8px;gap:6px;flex-direction:row;align-items:center}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection>.icon{width:20px;height:20px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection-label,body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection-state{font-size:11px;line-height:1.2;overflow-wrap:anywhere}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .app-shell{flex:1 1 0;min-height:0;min-width:0;width:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px max(12px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .user-panel-tabs{margin:0;gap:8px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .user-panel-tabs button{padding:6px 10px}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .app-shell>.page-footer{margin:0;padding:0;font-size:10px;line-height:1.2}
+.panel-page.user-navigation #user-monitoring-panel:not([hidden]){display:grid;grid-template-rows:minmax(0,auto) minmax(0,1fr) auto;gap:8px;padding:10px;min-height:0;overflow:auto;overscroll-behavior:contain}
+.panel-page.user-navigation #user-monitoring-panel .card-heading{font-size:15px;padding-bottom:6px;line-height:1.2;min-height:0}
+.panel-page.user-navigation #user-monitoring-panel .last-movement{min-height:0;max-height:30dvh;overflow:auto;overscroll-behavior:contain;margin:0;padding:10px;border-radius:12px}
+.panel-page.user-navigation #user-monitoring-panel .last-movement-fields{grid-template-columns:2fr .6fr 2fr;gap:8px;margin:6px 0}
+.panel-page.user-navigation #user-monitoring-panel .last-movement-fields dt{font-size:11px;margin-bottom:2px}
+.panel-page.user-navigation #user-monitoring-panel .last-movement-fields dd{font-size:13px;line-height:1.3}
+.panel-page.user-navigation #user-monitoring-panel .last-movement-note{font-size:11px;line-height:1.25}
+.panel-page.user-navigation #user-monitoring-panel .last-movement-status{font-size:11px;line-height:1.25;padding:4px 0}
+.panel-page.user-navigation #user-monitoring-panel .movement-history{display:flex;flex-direction:column;min-height:0;margin:0;padding:0;border:0;overflow:auto;overscroll-behavior:contain}
+.panel-page.user-navigation #user-monitoring-panel .history-note,.panel-page.user-navigation #user-monitoring-panel .history-status{font-size:11px;line-height:1.25;padding:3px 0;flex-shrink:0}
+.panel-page.user-navigation #user-monitoring-panel .movement-history>.card-heading{flex-shrink:0}
+.panel-page.user-navigation #user-monitoring-panel .history-table-scroll{flex:1 1 0;min-height:44px;overflow:auto;overscroll-behavior:contain;margin-top:4px;border-radius:8px;scroll-padding-top:34px}
+.panel-page.user-navigation #user-monitoring-panel .history-table{font-size:12px;min-width:480px}
+.panel-page.user-navigation #user-monitoring-panel .history-table th,.panel-page.user-navigation #user-monitoring-panel .history-table td{padding:8px 10px}
+.panel-page.user-navigation #user-monitoring-panel .history-table th{position:sticky;top:0;z-index:1;background:#311c30}
+.panel-page.user-navigation #user-monitoring-panel .events-disclosure{min-height:0;min-width:0;margin:0}
+.panel-page.user-navigation #user-monitoring-panel .events-toggle{display:flex;align-items:center;min-height:44px;padding:8px 10px;list-style:none;cursor:pointer;border:1px solid var(--border);border-radius:10px;background:#ff349f0a}
+.panel-page.user-navigation #user-monitoring-panel .events-toggle .card-heading{border:0;padding:0;font-size:13px}
+.panel-page.user-navigation #user-monitoring-panel .events-toggle::after{content:'⌄';margin-left:auto;color:var(--pink-light);border:0;transform:none;width:auto;height:auto}
+.panel-page.user-navigation #user-monitoring-panel .events-disclosure[open]>.events-toggle::after{content:'⌃'}
+.panel-page.user-navigation #user-monitoring-panel .events-disclosure:not([open])>.events-card{display:none}
+.panel-page.user-navigation #user-monitoring-panel .events-disclosure::details-content{height:auto}
+.panel-page.user-navigation #user-monitoring-panel .events-disclosure[open]>.events-card{display:flex;flex-direction:column;gap:4px;margin-top:4px;padding:6px;min-height:0;max-height:22dvh;overflow:auto}
+.panel-page.user-navigation #user-monitoring-panel .events-card h2{font-size:12px;min-width:0;flex-shrink:0}
+.panel-page.user-navigation #user-monitoring-panel .events-card h2 .icon{width:16px;height:16px}
+.panel-page.user-navigation #user-monitoring-panel .scarlette-events,.panel-page.user-navigation #user-monitoring-panel .events-empty{height:auto;min-height:0;max-height:none!important;overflow:auto!important;padding:4px!important;flex:1 1 auto}
+.panel-page.user-navigation #user-monitoring-panel .last-movement:focus-visible{outline:2px solid var(--pink-light);outline-offset:-3px}
+@media(max-height:500px) and (min-width:576px){
+ .panel-page.user-navigation #user-monitoring-panel:not([hidden]){grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);grid-template-rows:minmax(0,1fr) auto}
+ .panel-page.user-navigation #user-monitoring-panel .last-movement{grid-area:1/1;max-height:none}
+ .panel-page.user-navigation #user-monitoring-panel .last-movement-fields{grid-template-columns:1fr .4fr}
+ .panel-page.user-navigation #user-monitoring-panel .last-movement-fields>div:last-child{grid-column:1/-1}
+ .panel-page.user-navigation #user-monitoring-panel .movement-history{grid-area:1/2/3/3}
+ .panel-page.user-navigation #user-monitoring-panel .events-disclosure{grid-area:2/1;max-height:45dvh;overflow:auto}
+}
+/* En horizontal bajo, el resumen y la actividad comparten una región interna:
+   evita reducir la tarjeta a unas pocas líneas cuando se abre la actividad. */
+.panel-page.user-navigation #user-monitoring-panel .monitoring-summary-region{display:contents}
+.panel-page.user-navigation #user-monitoring-panel .last-movement{grid-row:1}
+.panel-page.user-navigation #user-monitoring-panel .movement-history{grid-row:2}
+.panel-page.user-navigation #user-monitoring-panel .events-disclosure{grid-row:3}
+@media(max-height:500px) and (min-width:576px){
+ .panel-page.user-navigation #user-monitoring-panel .monitoring-summary-region{display:block;grid-area:1/1/3/2;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;padding:2px;scroll-padding:2px}
+ .panel-page.user-navigation #user-monitoring-panel .movement-history{grid-area:1/2/3/3}
+ .panel-page.user-navigation #user-monitoring-panel .monitoring-summary-region .last-movement{max-height:none;overflow:visible;margin-bottom:8px}
+ .panel-page.user-navigation #user-monitoring-panel .monitoring-summary-region .events-disclosure{max-height:none;overflow:visible}
+ .panel-page.user-navigation #user-monitoring-panel .monitoring-summary-region:focus-visible{outline:2px solid var(--pink-light);outline-offset:-2px}
+}
+/* Mantener la fila de vista previa fuera de la cuadrícula tras autenticar. */
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .preview-notice[hidden]{display:none!important}
+@media(max-height:500px) and (min-width:576px){
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .topbar{flex-wrap:nowrap;gap:8px}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .topbar>.brand{gap:6px;flex:0 0 auto;max-width:155px}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .brand>.icon{width:22px;height:22px}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .brand-name{font-size:14px;display:block}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .brand-name span{display:block}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .brand p{font-size:9px}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .topbar>.connections{order:0;flex:1 1 0;width:auto;max-width:none;gap:4px}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection{padding:4px;gap:3px}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection>.icon{width:14px;height:14px}
+ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection-label,body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection-state{font-size:10px;overflow-wrap:normal}
+}
+body.user-navigation:has(#user-monitoring-panel:not([hidden])) .topbar{padding-top:calc(8px + env(safe-area-inset-top,0px))}

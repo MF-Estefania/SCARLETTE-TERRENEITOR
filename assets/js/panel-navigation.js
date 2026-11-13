@@ -23,7 +23,6 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   const heading = document.createElement("h2");
   heading.className = "card-heading";
   heading.textContent = "Actividad en tiempo real";
-  panels[1].append(heading);
   panels[1].hidden = true;
 
   const layout = shell.querySelector(".control-layout");
@@ -32,9 +31,10 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   // Mover conserva identidad, estado y manejadores de todos los controles.
   panels[0].append(layout, shell.querySelector(".stop-band"));
   const events = shell.querySelector(".events-disclosure");
+  // El título forma parte del desplegable para reservar espacio al historial.
+  events.querySelector(".events-toggle").replaceChildren(heading);
   panels[1].append(events);
-  // Mostrar la actividad también en móvil, conservando el desplegable accesible.
-  events.open = true;
+  events.open = false;
   panels[0].after(panels[1]);
   document.body.classList.add("user-navigation");
 

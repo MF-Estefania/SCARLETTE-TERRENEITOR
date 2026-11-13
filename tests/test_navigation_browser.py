@@ -76,14 +76,14 @@ def main():
                         assert page.locator('#user-monitoring-panel .events-disclosure').count()==1
                         assert not page.locator('.events-disclosure').is_visible()
                         page.evaluate("testSocket.dispatchEvent(new MessageEvent('message',{data:JSON.stringify({tipo:'movimiento_individual',comando:'ANTES'})}))")
-                        assert page.locator('.scarlette-events').inner_text().count('ANTES')==1
+                        assert page.locator('.scarlette-events').text_content().count('ANTES')==1
                         page.evaluate("window.originalList=document.querySelector('.scarlette-events');window.originalEvent=originalList.firstElementChild")
                         monitor.click()
                         assert page.get_by_role('heading',name='Actividad en tiempo real',exact=True).is_visible()
                         assert page.locator('.events-disclosure').is_visible()
-                        assert page.locator('.scarlette-events').inner_text().count('ANTES')==1
+                        assert page.locator('.scarlette-events').text_content().count('ANTES')==1
                         page.evaluate("testSocket.dispatchEvent(new MessageEvent('message',{data:JSON.stringify({tipo:'movimiento_individual',comando:'DURANTE'})}))")
-                        assert page.locator('.scarlette-events').inner_text().count('DURANTE')==1
+                        assert page.locator('.scarlette-events').text_content().count('DURANTE')==1
                         assert page.evaluate("originalList===document.querySelector('.scarlette-events') && originalList.children[1]===originalEvent")
                         assert all(page.locator('.connection').nth(i).is_visible() for i in range(3))
                         control.tap()
@@ -97,12 +97,12 @@ def main():
                         page.keyboard.press('Space')
                         expect(control).to_have_attribute('aria-selected','true')
                         assert page.evaluate("calls.filter(c=>!c.path.endsWith('/historial') && !c.path.endsWith('/estado')).length")==count and page.evaluate('sockets')==1
-                        assert page.locator('.scarlette-events').inner_text().count('ANTES')==1
-                        assert page.locator('.scarlette-events').inner_text().count('DURANTE')==1
+                        assert page.locator('.scarlette-events').text_content().count('ANTES')==1
+                        assert page.locator('.scarlette-events').text_content().count('DURANTE')==1
                         page.evaluate("for(let i=0;i<45;i++) testSocket.dispatchEvent(new MessageEvent('message',{data:JSON.stringify({tipo:'movimiento_individual',comando:'EVENTO-'+i})}))")
                         assert page.locator('.scarlette-events > div').count()==40
-                        assert 'EVENTO-44' in page.locator('.scarlette-events > div').first.inner_text()
-                        assert 'EVENTO-5' in page.locator('.scarlette-events > div').last.inner_text()
+                        assert 'EVENTO-44' in page.locator('.scarlette-events > div').first.text_content()
+                        assert 'EVENTO-5' in page.locator('.scarlette-events > div').last.text_content()
                         assert page.evaluate("calls.filter(c=>!c.path.endsWith('/historial') && !c.path.endsWith('/estado')).length")==count and page.evaluate('sockets')==1
                         assert page.evaluate("originalJoystick===document.querySelector('.joystick') && originalEvents===document.querySelector('.events-disclosure')")
                         # Keyboard movement remains active after blur: navigation must stop it.

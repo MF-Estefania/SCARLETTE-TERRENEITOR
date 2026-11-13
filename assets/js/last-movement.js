@@ -7,6 +7,7 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   const card = document.createElement("section");
   card.id = "last-movement";
   card.className = "last-movement";
+  card.tabIndex = 0;
   card.setAttribute("aria-labelledby", "last-movement-title");
   const title = document.createElement("h2");
   title.id = "last-movement-title";
@@ -35,7 +36,13 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   retry.textContent = "Reintentar estado";
   retry.addEventListener("click", () => window.SCARLETTE_CONNECTIONS.solicitarActualizacion());
   card.append(title, status, fields, note, retry);
-  panel.prepend(card);
+  const summaryRegion = document.createElement("div");
+  summaryRegion.className = "monitoring-summary-region";
+  summaryRegion.tabIndex = 0;
+  summaryRegion.setAttribute("role", "region");
+  summaryRegion.setAttribute("aria-label", "Último movimiento y actividad en tiempo real");
+  summaryRegion.append(card, panel.querySelector(".events-disclosure"));
+  panel.prepend(summaryRegion);
 
   function render(snapshot) {
     const data = snapshot.datos;
