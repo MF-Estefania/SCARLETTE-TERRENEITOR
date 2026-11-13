@@ -9,6 +9,24 @@ window.SCARLETTE_CONNECTIONS = (() => {
   let temporizador = null;
   let activo = false;
   let consultando = false;
+  let actualizacionPendiente = false;
+  let actualizacionProgramada = null;
+  let ultimoEstado = Object.freeze({ estado: "loading", datos: null, http: null });
+
+  function publicarEstado(estado, datos = ultimoEstado.datos, http = null) {
+    ultimoEstado = Object.freeze({ estado, datos, http });
+    document.dispatchEvent(new CustomEvent("scarlette:estado-actualizado", { detail: ultimoEstado }));
+  }
+
+  function solicitarActualizacion() {
+    if (!activo) return;
+    actualizacionPendiente = true;
+    if (consultando || actualizacionProgramada !== null) return;
+    actualizacionProgramada = setTimeout(() => {
+      actualizacionProgramada = null;
+      void verificar();
+    }, 500);
+  }
 
   function actualizarIndicador(indice, mensaje, disponible) {
     const conexiones = document.querySelectorAll(".connection");
@@ -33,9 +51,13 @@ window.SCARLETTE_CONNECTIONS = (() => {
     if (!activo || consultando) return;
 
     consultando = true;
+    actualizacionPendiente = false;
+    if (actualizacionProgramada !== null) clearTimeout(actualizacionProgramada);
+    actualizacionProgramada = null;
+    publicarEstado("loading");
 
     try {
-      await api.solicitar(
+      const datos = await api.solicitar(
         `/vehiculos/${config.VEHICLE_ID}/estado`,
         { method: "GET" }
       );
@@ -45,10 +67,27 @@ window.SCARLETTE_CONNECTIONS = (() => {
       actualizarIndicador(1, "Disponible", true);
       actualizarIndicador(2, "Disponible", true);
 
+      // El estado físico no determina la disponibilidad de API/RDS.
+      const valido = datos && !Array.isArray(datos) && datos.id_vehiculo === config.VEHICLE_ID &&
+        ["comando", "codigo", "fecha_actualizacion"].every(campo =>
+          Object.prototype.hasOwnProperty.call(datos, campo) &&
+          (datos[campo] === null || typeof datos[campo] === "string"));
+      if (!valido) {
+        publicarEstado("error");
+      } else {
+        const registro = Object.freeze({
+          comando: datos.comando,
+          codigo: datos.codigo,
+          fecha_actualizacion: datos.fecha_actualizacion
+        });
+        publicarEstado(datos.comando || datos.codigo || datos.fecha_actualizacion ? "ready" : "empty", registro);
+      }
+
     } catch (error) {
       if (!activo) return;
 
       console.warn("SCARLETTE: verificación de conexiones:", error.message);
+      publicarEstado("error", ultimoEstado.datos, error.status || null);
 
       if (error.status === 503) {
         actualizarIndicador(1, "Disponible", true);
@@ -65,6 +104,7 @@ window.SCARLETTE_CONNECTIONS = (() => {
       }
     } finally {
       consultando = false;
+      if (actualizacionPendiente) solicitarActualizacion();
     }
   }
 
@@ -79,6 +119,9 @@ window.SCARLETTE_CONNECTIONS = (() => {
 
   function detener() {
     activo = false;
+    actualizacionPendiente = false;
+    if (actualizacionProgramada !== null) clearTimeout(actualizacionProgramada);
+    actualizacionProgramada = null;
 
     if (temporizador) {
       clearInterval(temporizador);
@@ -92,6 +135,8 @@ window.SCARLETTE_CONNECTIONS = (() => {
   return Object.freeze({
     iniciar,
     detener,
-    verificar
+    verificar,
+    solicitarActualizacion,
+    obtenerEstado: () => ultimoEstado
   });
 })();
