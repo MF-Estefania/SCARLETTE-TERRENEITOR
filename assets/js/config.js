@@ -6,6 +6,7 @@
 window.SCARLETTE_CONFIG = Object.freeze({
   API_BASE_URL: "https://api-terreneitor-km2026.duckdns.org",
   WS_BASE_URL: "wss://api-terreneitor-km2026.duckdns.org",
-  VEHICLE_ID: 7,
+  VEHICLE_ID: 1,
+  EXHIBITION_VEHICLE_ID: 2,
   REQUEST_TIMEOUT_MS: 10000
 });

@@ -6,18 +6,18 @@ window.SCARLETTE_CONTROLS = (() => {
   const ID_VEHICULO = window.SCARLETTE_CONFIG.VEHICLE_ID;
 
   const COMANDOS = Object.freeze({
-    avanzar: 25,
-    retroceder: 26,
-    diagonalIzquierda: 27,
-    luces: 28,
-    diagonalDerecha: 29,
-    rectoIzquierda: 30,
-    postura: 31,
-    rectoDerecha: 32,
-    musica: 34,
-    giro360: 35,
-    giroIzquierda: 36,
-    giroDerecha: 37
+    avanzar: 1,
+    retroceder: 2,
+    diagonalIzquierda: 3,
+    luces: 4,
+    diagonalDerecha: 5,
+    rectoIzquierda: 6,
+    postura: 7,
+    rectoDerecha: 8,
+    musica: 10,
+    giro360: 11,
+    giroIzquierda: 12,
+    giroDerecha: 13
   });
 
   let controlesActivos = false;

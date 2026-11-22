@@ -57,6 +57,13 @@ window.SCARLETTE_CONNECTIONS = (() => {
     publicarEstado("loading");
 
     try {
+      // Diagnóstico independiente de API AWS y Amazon RDS MySQL
+      const salud = await api.solicitar("/sistema/salud", { method: "GET" }).catch(() => null);
+      if (salud) {
+        actualizarIndicador(1, "Disponible", salud.api_status === "disponible");
+        actualizarIndicador(2, salud.rds_status === "disponible" ? "Disponible" : "No disponible", salud.rds_status === "disponible");
+      }
+
       const datos = await api.solicitar(
         `/vehiculos/${config.VEHICLE_ID}/estado`,
         { method: "GET" }
@@ -64,8 +71,10 @@ window.SCARLETTE_CONNECTIONS = (() => {
 
       if (!activo) return;
 
-      actualizarIndicador(1, "Disponible", true);
-      actualizarIndicador(2, "Disponible", true);
+      if (!salud) {
+        actualizarIndicador(1, "Disponible", true);
+        actualizarIndicador(2, "Disponible", true);
+      }
 
       // El estado físico no determina la disponibilidad de API/RDS.
       const valido = datos && !Array.isArray(datos) && datos.id_vehiculo === config.VEHICLE_ID &&

@@ -5,7 +5,8 @@ window.SCARLETTE_AUTH = (() => {
 
   const ROLES = Object.freeze({
     admin: "administradora",
-    user: "usuario"
+    user: "usuario",
+    guest: "invitado"
   });
 
   async function iniciarSesion(tipoCuenta, nombreUsuario, password) {

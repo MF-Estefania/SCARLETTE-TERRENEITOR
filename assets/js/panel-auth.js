@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const usuario = await auth.verificarSesion();
 
-    if (!usuario || !["administradora", "usuario"].includes(usuario.rol)) {
+    if (!usuario || !["administradora", "administrador", "usuario", "invitado"].includes(usuario.rol)) {
       api.limpiarToken();
       window.location.replace("index.html");
       return;
